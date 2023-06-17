@@ -14,11 +14,52 @@ public abstract class AutomateCellulaire {
         for (int i = 0; i < grille.getLigne(); i++) {
             String line = "|";
             for (int j = 0; j < grille.getColone(); j++) {
-                line += grille.getCellulePos(i, j) == 1 ? "*" : ".";
+                line += grille.getCellulePos(i, j).estVivant() ? "*" : ".";
             }
             line += "|";
             System.out.println(line);
         }
         System.out.println("-------\n");
+    }
+    public int compteCell(int x, int y) {
+        if(x < 0 || x >= grille.getLigne())
+            return 0;
+        if(y < 0 || y >= grille.getColone())
+            return 0;
+        return this.grille.getCellulePos(x,y).getEtat();
+    }
+    public int compteVoisin(int x, int y) {
+        int cpt = 0;
+        cpt += compteCell(x-1,y-1);
+        cpt += compteCell(x-1,y);
+        cpt += compteCell(x-1,y+1);
+
+        cpt += compteCell(x,y-1);
+        cpt += compteCell(x,y+1);
+
+        cpt += compteCell(x+1,y-1);
+        cpt += compteCell(x+1,y);
+        cpt += compteCell(x+1,y+1);
+
+        return cpt;
+    }
+
+    public void uneEtape() {
+        Grille res = new Grille(this.grille);
+        for(int i = 0; i < grille.getLigne(); i++) {
+            for(int j = 0; j < grille.getColone(); j++) {
+                int nbVoisin = compteVoisin(i,j);
+                if(this.grille.getCellulePos(i,j).estVivant()) {
+                    if(nbVoisin == 2 || nbVoisin == 3)
+                        res.getCellulePos(i,j).setVivant();
+                    else
+                        res.getCellulePos(i,j).setMort();
+                } else {
+                    if(nbVoisin == 3)
+                        res.getCellulePos(i,j).setVivant();
+                }
+            }
+        }
+        this.grille.setEspaceJeu(res.getEspaceJeu());
     }
 }

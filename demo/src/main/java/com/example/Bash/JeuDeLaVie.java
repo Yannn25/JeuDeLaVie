@@ -10,4 +10,5 @@ public class JeuDeLaVie extends AutomateCellulaire {
    public JeuDeLaVie(Grille grille) {
        super(grille);
    }
+
 }

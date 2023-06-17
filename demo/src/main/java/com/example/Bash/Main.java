@@ -2,30 +2,71 @@ package com.example.Bash;
 
 
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        LinkedList<Integer> tab = new LinkedList<>(List.of(4,4,0,0,0,1,0,1,1,0,0,1,1,0,0,0,0,0));
-        Grille grid = Grille.init(tab);
 
-        JeuDeLaVie Game = new JeuDeLaVie(grid);
-        Game.affichageGrille();
-        System.out.println("hello world ! \n\nchargement fichier:::::::\n\n");
+    public static void listerExemples(String rep) {
+        Path cheminRepertoire = Paths.get(rep);
+        int i = 1;
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(cheminRepertoire)) {
+            for (Path fichier : stream) {
+                if (Files.isRegularFile(fichier)) {
+                    System.out.println(i+". "+fichier.getFileName());
+                    i++;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public static String obtenirNomFichier(String repertoire, int choix) {
+        Path cheminRepertoire = Paths.get(repertoire);
+        int i = 1;
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(cheminRepertoire)) {
+            for (Path fichier : stream) {
+                if (Files.isRegularFile(fichier)) {
+                    if (i == choix) {
+                        return fichier.getFileName().toString();
+                    }
+                    i++;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void main(String[] args) {
         FichierGrille fic = new FichierGrille();
-        //try {
-            String filename="/demo/src/main/java/com/example/Exemples_de_configurations/clock-step0.life";
-            Path pathToFile = Paths.get(filename);
-            System.out.println(pathToFile.toAbsolutePath());
-            //List<String> lst = fic.lireFichier(filename);
-            //grid = Grille.init(fic.convertionFichier(lst));
-        //} catch (IOException e) {
-            //throw new RuntimeException(e);
-        //}
-        Game = new JeuDeLaVie(grid);
-        Game.affichageGrille();
+        Grille grid; AutomateCellulaire game;
+        System.out.println("hello world ! \n\nChoisissez le numéro de votre configuration initial :\n");
+        String rep = System.getProperty("user.dir");
+        rep = rep+"/demo/src/main/java/com/example/Exemples_de_configurations/";
+        listerExemples(rep);
+        Scanner scanner = new Scanner(System.in);
+        int choix = scanner.nextInt();
+        scanner.close();
+        System.out.println("Configuration : "+obtenirNomFichier(rep, choix));
+        rep = rep+obtenirNomFichier(rep, choix);
+        try {
+            List<String> lst = fic.lireFichier(rep);
+            grid = Grille.init(fic.convertionFichier(lst));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        game = new JeuDeLaVie(grid);
+        game.affichageGrille();
+        game.uneEtape();
+        game.affichageGrille();
+        game.uneEtape();
+        game.affichageGrille();
+
     }
 }

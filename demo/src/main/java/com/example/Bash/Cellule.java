@@ -5,20 +5,27 @@ package com.example.Bash;
  */
 public class Cellule {
 
-    private int Vivant;
+    private int etat;
     public Cellule (int val) {
-        this.Vivant = val;
+        this.etat = val;
     }
 
-    public int getVivant() {
-        return this.Vivant;
+    public Cellule getCellule() {
+        return this;
+    }
+    public int getEtat() {
+        return this.etat;
+    }
+
+    public boolean estVivant() {
+        return this.etat == 1;
     }
     public Cellule setVivant() {
-        this.Vivant = 1;
+        this.etat = 1;
         return this;
     }
     public Cellule setMort() {
-        this.Vivant = 0;
+        this.etat = 0;
         return this;
     }
 
