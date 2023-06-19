@@ -1,7 +1,7 @@
 package com.example.Bash;
 
 /**
- * Gère l'affichage des étapes
+ * Automate Cellulaire
  */
 public abstract class AutomateCellulaire {
 
@@ -9,6 +9,10 @@ public abstract class AutomateCellulaire {
     public AutomateCellulaire(Grille grille) {
         this.grille = grille;
     }
+
+    /**
+     * Affichage d'une grille en fonction des etats des cellules présente dessus
+     */
     public void affichageGrille() {
         System.out.println("-------");
         for (int i = 0; i < grille.getLigne(); i++) {
@@ -21,6 +25,13 @@ public abstract class AutomateCellulaire {
         }
         System.out.println("-------\n");
     }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public int compteCell(int x, int y) {
         if(x < 0 || x >= grille.getLigne())
             return 0;
@@ -28,6 +39,13 @@ public abstract class AutomateCellulaire {
             return 0;
         return this.grille.getCellulePos(x,y).getEtat();
     }
+
+    /**
+     *
+     * @param x
+     * @param y
+     * @return
+     */
     public int compteVoisin(int x, int y) {
         int cpt = 0;
         cpt += compteCell(x-1,y-1);
@@ -44,6 +62,9 @@ public abstract class AutomateCellulaire {
         return cpt;
     }
 
+    /**
+     *
+     */
     public void uneEtape() {
         Grille res = new Grille(this.grille);
         for(int i = 0; i < grille.getLigne(); i++) {

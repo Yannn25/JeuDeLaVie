@@ -1,7 +1,7 @@
 package com.example.Bash;
 
 /**
- * Représente une cellule individuelle avec son état (vivant ou mort) et ses coordonnées dans la grille.
+ * Représente une cellule individuelle avec son état (vivant ou mort).
  */
 public class Cellule {
 
@@ -15,6 +15,9 @@ public class Cellule {
     }
     public int getEtat() {
         return this.etat;
+    }
+    public void setEtat(int val) {
+        this.etat = val;
     }
 
     public boolean estVivant() {
