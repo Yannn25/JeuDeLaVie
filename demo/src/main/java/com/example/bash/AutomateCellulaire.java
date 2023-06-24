@@ -1,12 +1,19 @@
 package com.example.bash;
 
+import java.util.List;
+
 /**
  * Automate Cellulaire
  */
-public abstract class AutomateCellulaire {
+public class AutomateCellulaire {
 
     private Grille grille;
-    public AutomateCellulaire(Grille grille) {
+    private Regles regles;
+
+    private AutomateCellulaire(){
+        super();
+    }
+    protected AutomateCellulaire(Grille grille) {
         this.grille = grille;
     }
 
@@ -14,16 +21,14 @@ public abstract class AutomateCellulaire {
      * Affichage d'une grille en fonction des etats des cellules présente dessus
      */
     public void affichageGrille() {
-        System.out.println("-------");
         for (int i = 0; i < grille.getLigne(); i++) {
             String line = "|";
             for (int j = 0; j < grille.getColone(); j++) {
-                line += grille.getCellulePos(i, j).estVivant() ? "*" : ".";
+                line += grille.getCellulePos(i, j).estVivant() ? ColorText.BLUE+"*"+ColorText.RESET : ".";
             }
             line += "|";
             System.out.println(line);
         }
-        System.out.println("-------\n");
     }
 
     /**
@@ -48,17 +53,11 @@ public abstract class AutomateCellulaire {
      */
     public int compteVoisin(int x, int y) {
         int cpt = 0;
-        cpt += compteCell(x-1,y-1);
-        cpt += compteCell(x-1,y);
-        cpt += compteCell(x-1,y+1);
-
-        cpt += compteCell(x,y-1);
-        cpt += compteCell(x,y+1);
-
-        cpt += compteCell(x+1,y-1);
-        cpt += compteCell(x+1,y);
-        cpt += compteCell(x+1,y+1);
-
+        for (int[] pos : regles.getVoisinage()) {
+            int voisinX = x + pos[0];
+            int voisinY = y + pos[1];
+            cpt += compteCell(voisinX, voisinY);
+        }
         return cpt;
     }
 
@@ -70,17 +69,51 @@ public abstract class AutomateCellulaire {
         for(int i = 0; i < grille.getLigne(); i++) {
             for(int j = 0; j < grille.getColone(); j++) {
                 int nbVoisin = compteVoisin(i,j);
-                if(this.grille.getCellulePos(i,j).estVivant()) {
-                    if(nbVoisin == 2 || nbVoisin == 3)
-                        res.getCellulePos(i,j).setVivant();
-                    else
-                        res.getCellulePos(i,j).setMort();
+                if (this.grille.getCellulePos(i, j).estVivant()) {
+                    if (regles.doitSurvivre(nbVoisin)) {
+                        res.getCellulePos(i, j).setVivant();
+                    } else {
+                        res.getCellulePos(i, j).setMort();
+                    }
                 } else {
-                    if(nbVoisin == 3)
-                        res.getCellulePos(i,j).setVivant();
+                    if (regles.doitNaitre(nbVoisin)) {
+                        res.getCellulePos(i, j).setVivant();
+                    }
                 }
             }
         }
         this.grille.setEspaceJeu(res.getEspaceJeu());
     }
+
+
+    /**
+     * Classe Builder interne
+     */
+    public static class Builder {
+        private Grille grille;
+        private Regles regles;
+
+        public Builder() {
+
+        }
+
+        public Builder setGrille(Grille grille) {
+            this.grille = grille;
+            return this;
+        }
+
+        public Builder setRegles(Regles regles) {
+            this.regles = regles;
+            return this;
+        }
+
+
+        public AutomateCellulaire build() {
+            AutomateCellulaire automate = new AutomateCellulaire();
+            automate.grille = this.grille;
+            automate.regles = this.regles;
+            return automate;
+        }
+    }
+
 }

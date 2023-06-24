@@ -5,6 +5,7 @@ package com.example.bash;
  */
 public class Cellule {
 
+    private char phase;
     private int etat;
     public Cellule (int val) {
         this.etat = val;
