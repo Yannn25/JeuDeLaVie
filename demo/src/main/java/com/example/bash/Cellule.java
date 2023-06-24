@@ -1,4 +1,4 @@
-package com.example.Bash;
+package com.example.bash;
 
 /**
  * Représente une cellule individuelle avec son état (vivant ou mort).

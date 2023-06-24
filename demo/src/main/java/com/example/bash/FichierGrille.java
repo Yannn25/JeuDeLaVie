@@ -1,4 +1,4 @@
-package com.example.Bash;
+package com.example.bash;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;

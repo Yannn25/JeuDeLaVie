@@ -1,4 +1,4 @@
-package com.example.Bash;
+package com.example.bash;
 
 /**
  *  Implémente les règles spécifiques du Jeu de la Vie

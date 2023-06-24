@@ -1,4 +1,4 @@
-package com.example.Bash;
+package com.example.bash;
 
 import java.util.LinkedList;
 
