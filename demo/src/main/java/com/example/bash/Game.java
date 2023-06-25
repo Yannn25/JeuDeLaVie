@@ -50,24 +50,29 @@ public class Game {
         System.out.println("Veuillez entrer les cellules de la grille (0 pour morte, 1 pour vivante(separer par une virgule)) :");
         sc.nextLine(); // Ignorer le retour à la ligne après la saisie de colonnes
         Cellule espace [][] = new Cellule[lignes][col];
-
-        for (int i = 0; i < lignes; i++) {
-            String ligne = sc.nextLine();
-            String[] cellules = ligne.split(",");
-            for (int j = 0; j < col; j++) {
-                int etatCellule = Integer.parseInt(cellules[j].trim());
-                espace[i][j] = new Cellule(etatCellule);
+        try {
+            for (int i = 0; i < lignes; i++) {
+                String ligne = sc.nextLine();
+                String[] cellules = ligne.split(",");
+                for (int j = 0; j < col; j++) {
+                    int etatCellule = Integer.parseInt(cellules[j].trim());
+                    etatCellule = etatCellule > 0 ? 1 : 0;
+                    espace[i][j] = new Cellule(etatCellule);
+                }
             }
+            grid.setEspaceJeu(espace);
+        } catch (Exception e) {
+            System.out.println("Erreur de saisie. Veuillez reessayer.");
+            gestionConfigPersonnaliser();
         }
-        grid.setEspaceJeu(espace);
         return grid;
     }
 
     public static Regles ReglesPersonnaliser() {
-        System.out.println("Entrez les nombres de voisins nécessaires pour une naissance (separes par des virgules) :");
+        System.out.println("Entrez les nombres de voisins necessaires pour une naissance (separes par des virgules) :");
         sc.nextLine(); // Vide la ligne précédente
         String naissanceInput = sc.nextLine();
-        System.out.println("Entrez les nombres de voisins nécessaires pour une survie (separes par des virgules) :");
+        System.out.println("Entrez les nombres de voisins necessaires pour une survie (separes par des virgules) :");
         String survieInput = sc.nextLine();
 
         List<Integer> seuilNaissance = parseSeuils(naissanceInput);
@@ -76,9 +81,8 @@ public class Game {
         String rep = sc.nextLine();
         if(rep.toLowerCase().equals("oui"))
             return new Regles(seuilNaissance,seuilsSurvie);
-        System.out.println("Par rapport à une position (x, y) entrez les coordonnées des voisins à surveiller (sous la forme (x, y), séparés par des virgules) :");
+        System.out.println("Par rapport à une position (x, y) entrez les coordonnees des voisins à surveiller (sous la forme (x, y), separes par des virgules) :");
         String voisinageInput = sc.nextLine();
-
         List<int[]> voisinage = parseVoisinage(voisinageInput);
         return new Regles(voisinage,seuilNaissance, seuilsSurvie);
     }
@@ -98,7 +102,7 @@ public class Game {
     }
     private static List<int[]> parseVoisinage(String input) {
         List<int[]> voisinage = new ArrayList<>();
-        String[] voisinageTokens = input.split(",");
+        String[] voisinageTokens = input.split("\\),");
         for (String token : voisinageTokens) {
             try {
                 // Supprimer les parenthèses et séparer les coordonnées sur la virgule
@@ -111,8 +115,10 @@ public class Game {
                 // Ignorer les tokens qui ne sont pas des coordonnées valides
             }
         }
+        System.out.println(voisinage);
         return voisinage;
     }
+
 
     /**
      *
@@ -156,6 +162,7 @@ public class Game {
                         .setRegles(regles)
                         .setGrille(grid)
                         .build();
+                sc.nextLine();
                 return automate;
             case 2:
                 regles = new Regles(voisinage,Arrays.asList(3,6),Arrays.asList(2, 3));
@@ -163,6 +170,7 @@ public class Game {
                         .setRegles(regles)
                         .setGrille(grid)
                         .build();
+                sc.nextLine();
                 return automate;
             case 3:
                 regles = new Regles(voisinage,Arrays.asList(3,6,7,8),Arrays.asList(3,4,6,7,8));
@@ -170,6 +178,7 @@ public class Game {
                         .setRegles(regles)
                         .setGrille(grid)
                         .build();
+                sc.nextLine();
                 return automate;
             case 4:
                 voisinage = Arrays.asList(
@@ -181,6 +190,7 @@ public class Game {
                         .setRegles(regles)
                         .setGrille(grid)
                         .build();
+                sc.nextLine();
                 return automate;
             case 5:
                 regles = ReglesPersonnaliser();
@@ -191,7 +201,7 @@ public class Game {
                 return automate;
             default:
                 System.out.println("Plage non valide...\n");
-                System.exit(0);
+                break;
         }
         return null;
     }
@@ -203,11 +213,11 @@ public class Game {
         FichierGrille fic = new FichierGrille();
         Grille grid; AutomateCellulaire game;
 
-        System.out.println("Hello World !\nChoisissez le numéro de votre configuration initial :\n");
+        System.out.println("Hello World !\nChoisissez le numero de votre configuration initial :\n");
         String rep = System.getProperty("user.dir");
         rep = rep+"/demo/src/main/java/com/example/Exemples_de_configurations/";
         listerExemples(rep);
-        System.out.println("99. Personnalisée");
+        System.out.println("99. Personnalisee");
         int choix = Integer.parseInt(sc.nextLine());
         if(choix == 99) {
             grid = gestionConfigPersonnaliser();
@@ -216,24 +226,29 @@ public class Game {
             rep = rep + obtenirNomFichier(rep, choix);
             try {
                 List<String> lst = fic.lireFichier(rep);
-                grid = Grille.init(fic.convertionFichier(lst));
+                grid = lst.get(0).startsWith("!") ? Grille.init(fic.convertionCells(lst)) : Grille.init(fic.convertionFichier(lst));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        System.out.println("\nA quelle variante vous souhaitez jouer : \n1.Jeu de la Vie,Conways(B3/S23)\n2.HighLife(B36/S23)\n3.Day & Night(B3678/S34678)\n4. Grille 1D(B2/S1)\n5. Personnalisée\n");
+        System.out.println("\nA quelle variante vous souhaitez jouer : \n1.Jeu de la Vie,Conways(B3/S23)\n2.HighLife(B36/S23)\n3.Day & Night(B3678/S34678)\n4. Grille 1D(B2/S1)\n5. Personnalisee\n");
         choix = sc.nextInt();
         game = gestionRegle(choix, grid);
-        game.affichageGrille();
         while (true) {
-                System.out.println("Tapez 's' pour passer une etape ou 'q' pour quitter :");
-                String input = sc.nextLine();
-                if (input.equals("q")) {
+            System.out.println("Entrez pour passer une etape ou 'q' pour quitter :");
+            game.affichageGrille();
+            String input = sc.nextLine();
+            if (input.equals("q")) {
+                System.out.println("Taper 'q' pour quitter l'application sinon entrez pour revenir au menu :");
+                input = sc.nextLine();
+                if(input.equals("q")){
                     sc.close();
                     System.exit(0);
+                } else {
+                    start();
                 }
+            }
             game.uneEtape();
-            game.affichageGrille();
         }
 
     }

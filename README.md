@@ -28,6 +28,7 @@ Dans le cadre de ce projet, les extensions suivantes ont été mises en place :
 
 Possibilité de créer une grille à partir du terminal : Vous pouvez spécifier la taille de la grille et son état initial en utilisant les commandes fournies par l'interface utilisateur.
 Possibilité de configurer des règles spécifiques : Vous pouvez spécifier les règles qui seront utiliser lors des phases du jeu, en choisissant le voisinage et comment sera réguler la naissance et la survie.
+Lecture des fichiers .cells
 
 # Piste de réflexion pour ce qui n'a pas été implémenté
 - Automate cellulaire a plusieurs états

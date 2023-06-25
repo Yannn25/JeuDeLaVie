@@ -30,4 +30,29 @@ public class FichierGrille {
 
         return result;
     }
+
+    public LinkedList<Integer> convertionCells(List<String> lst) {
+        LinkedList<Integer> result = new LinkedList<>();
+        int lignes = 0, col = 0;
+        boolean flag = false;
+        for (int i = 0; i < lst.size(); i++) {
+            String ligneCourante = lst.get(i);
+            if(ligneCourante.startsWith("!"))
+                continue;
+            lignes++;
+            for (char c : ligneCourante.toCharArray()) {
+                if (c == '.' || c == 'O') {
+                    if(!flag)
+                        col++;
+                    int etatCellule = (c == 'O') ? 1 : 0;
+                    result.add(etatCellule);
+                }
+
+            }
+            flag = true;
+        }
+        result.add(0,lignes);
+        result.add(1,col);
+        return result;
+    }
 }

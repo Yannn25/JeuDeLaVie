@@ -22,9 +22,9 @@ public class AutomateCellulaire {
      */
     public void affichageGrille() {
         for (int i = 0; i < grille.getLigne(); i++) {
-            String line = "|";
+            String line = "| ";
             for (int j = 0; j < grille.getColone(); j++) {
-                line += grille.getCellulePos(i, j).estVivant() ? ColorText.BLUE+"*"+ColorText.RESET : ".";
+                line += grille.getCellulePos(i, j).estVivant() ? ColorText.RED+"* "+ColorText.RESET : ". ";
             }
             line += "|";
             System.out.println(line);
